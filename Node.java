@@ -1,9 +1,17 @@
 package fourinline2;
 import java.util.ArrayList;
 import java.util.Random;
+class Move {
+            int row;
+            int col; 
+            int getRow(){return row;} 
+            int getCol(){return col;}
+        }
+
 class Node {
     private static Random rand = new Random();
         Board board, available_tiles;
+        Move newMove;
         ArrayList<Node> children;
         int value = rand.nextInt(100);
         Node(Board clone)

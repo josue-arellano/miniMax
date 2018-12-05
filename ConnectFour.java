@@ -5,24 +5,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class ConnectFour extends Board{
-    class Coord {
-        int row, col;
-        Coord(int r, int c){row = r; col= c;}
-        void set(int r, int c){row = r; col= c;}
-        int getRow(){return row;}
-        int getCol(){return col;}
-    }
     Board board = new Board();
     public static int boardSize = 8;
     private static Random rand = new Random();
     Scanner input = new Scanner(System.in);
-    /*private class Player {
-        private char symbol = '';
-        Player(char x_or_o){symbol = x_or_o}
-        public setStamp(){symbol = x_or_o}
-        public stamp(){return symbol;}
-
-    } */
 
     public ConnectFour() {
         board = new Board();
@@ -102,7 +88,6 @@ public class ConnectFour extends Board{
     //     }
     //     return longestChain;
     // }
-
 
      public void displayGame() 
     {

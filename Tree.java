@@ -1,22 +1,9 @@
 package fourinline2;
 import java.util.ArrayList;
+import java.util.Collections;   
 import java.util.Random;
 public class Tree {
     private static Random rand = new Random();
-    class Node {
-        Board bnode, emptyTiles;
-        ArrayList<Node> children;
-        int value = rand.nextInt(100);
-        Node(Board clone){bnode = clone; children = new ArrayList<>(); emptyTiles=clone.clone();}
-        Board getBoard(){return bnode;}
-        Board getOpenTiles(){return emptyTiles;}
-        void addChild(Node offspring){children.add(offspring);}
-        void removeChild(int index){children.remove(index);}
-        int getValue(){return value;}
-        int getNumOfChildren(){return children.size();}
-        Node getChild(int index){return children.get(index);}
-        void evaluate(){;}
-    }
      Node root;
      Tree (Board rootBoard)
      {
@@ -24,11 +11,20 @@ public class Tree {
      }  
     void evaluateNextMove()
     {
-         int optimal = miniMax(root, true, 0, (int) Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
-         System.out.println("final gen size :" + root.getNumOfChildren() + "with oprtimal: " + optimal);
-         for (int i=0; i < root.getNumOfChildren(); i++ ) {
-            System.out.print(root.getChild(i).getValue() + ", ");  
-         }
+        int size = 10;
+        ArrayList<Integer> values = new ArrayList<>();
+        createFirstGen(root, size);
+        for (int i=0; i < size; i++ )
+            values.add(miniMax(root.getChild(i), false, 0, (int) Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY));
+        int optimal = Collections.max(values), opt_index = values.indexOf(optimal);
+        Board nextMove = root.getChild(opt_index).getBoard();
+        nextMove.displayBoard();
+        root.getBoard().displayBoard();
+    }
+    private void createFirstGen(Node start, int gen_size)
+    {
+        for (int i=0; i < gen_size; i++ )
+            start.addChild(generateChild(start, '0'));
     }
     int miniMax(Node root, boolean isMax, int depth, int alpha, int beta)
     {
@@ -48,10 +44,10 @@ public class Tree {
                     int value = miniMax(root.getChild(child), false, depth+1, alpha, beta);
                     bestValue = Math.max(bestValue, value);
                     alpha = Math.max(alpha, bestValue);
-                    if (beta <= alpha) { root.removeChild(child); break;}
+                    if (beta <= alpha) break;
                 
                 }
-                 root.getBoard().displayBoard();
+                 //root.getBoard().displayBoard();
             return bestValue;
         }
         else
@@ -64,9 +60,9 @@ public class Tree {
                     int value = miniMax(root.getChild(child), true, depth+1, alpha, beta);
                     bestValue = Math.min(bestValue, value);
                     beta = Math.min(beta, bestValue);
-                    if (beta <= alpha) { root.removeChild(child); break;}
+                    if (beta <= alpha)  break;
                 }
-                root.getBoard().displayBoard();
+                //root.getBoard().displayBoard();
             return bestValue;
         }
     }

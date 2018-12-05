@@ -58,4 +58,12 @@ public class Board {
     {
         return boardSize;
     }
+    public boolean isFull()
+    {
+        for(int i = 0; i < boardSize; i++)
+            for(int j = 0; j < boardSize; j++)
+                if(board[i][j] == '-')
+                    return false;
+        return true;
+    }
 }

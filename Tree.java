@@ -2,30 +2,33 @@ package fourinline2;
 import java.util.ArrayList;
 import java.util.Random;
 public class Tree {
-
+    private static Random rand = new Random();
     class Node {
-        Board bnode;
+        Board bnode, emptyTiles;
         ArrayList<Node> children;
-        int value = 5;
-        Node(Board clone){bnode = clone; children = new ArrayList<>();}
+        int value = rand.nextInt(100);
+        Node(Board clone){bnode = clone; children = new ArrayList<>(); emptyTiles=clone.clone();}
         Board getBoard(){return bnode;}
+        Board getOpenTiles(){return emptyTiles;}
         void addChild(Node offspring){children.add(offspring);}
+        void removeChild(int index){children.remove(index);}
         int getValue(){return value;}
         int getNumOfChildren(){return children.size();}
         Node getChild(int index){return children.get(index);}
         void evaluate(){;}
     }
      Node root;
-     Board emptyTiles;
-     private static Random rand = new Random();
-
      Tree (Board rootBoard)
      {
-        emptyTiles = new Board(rootBoard.clone());
         root = new Node(rootBoard.clone());
      }  
-    int evaluateNextMove(){
-        return miniMax(root, true, 0, (int) Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+    void evaluateNextMove()
+    {
+         int optimal = miniMax(root, true, 0, (int) Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY);
+         System.out.println("final gen size :" + root.getNumOfChildren() + "with oprtimal: " + optimal);
+         for (int i=0; i < root.getNumOfChildren(); i++ ) {
+            System.out.print(root.getChild(i).getValue() + ", ");  
+         }
     }
     int miniMax(Node root, boolean isMax, int depth, int alpha, int beta)
     {
@@ -38,16 +41,17 @@ public class Tree {
         if(isMax)
         {
             bestValue = (int) Double.NEGATIVE_INFINITY;
-            for (int child=0; child < generation_limit ;child++) 
+            for (int child=0; child < generation_limit;child++) 
                 {
-                    Node newChild = generateChild(root, emptyTiles);
+                    Node newChild = generateChild(root, '0');
                     root.addChild(newChild);
                     int value = miniMax(root.getChild(child), false, depth+1, alpha, beta);
                     bestValue = Math.max(bestValue, value);
                     alpha = Math.max(alpha, bestValue);
-                    if (beta <= alpha) break;
+                    if (beta <= alpha) { root.removeChild(child); break;}
                 
                 }
+                 root.getBoard().displayBoard();
             return bestValue;
         }
         else
@@ -55,27 +59,28 @@ public class Tree {
             bestValue = (int) Double.POSITIVE_INFINITY;
             for (int child=0; child< generation_limit ;child++) 
                 {
-                    Node newChild = generateChild(root, emptyTiles);
+                    Node newChild = generateChild(root, 'X');
                     root.addChild(newChild);
                     int value = miniMax(root.getChild(child), true, depth+1, alpha, beta);
                     bestValue = Math.min(bestValue, value);
                     beta = Math.min(beta, bestValue);
-                    if (beta <= alpha) break;
+                    if (beta <= alpha) { root.removeChild(child); break;}
                 }
+                root.getBoard().displayBoard();
             return bestValue;
         }
     }
-    Node generateChild(Node parent, Board openTiles)
+    Node generateChild(Node parent, char symbol)
     {
-        Board starterBoard = root.getBoard();
-        Board temp = new Board(starterBoard); // generate board copy
-        int gen_size = 0, gen_size_limit = 25, row, col;
-        do{row =rand.nextInt(7); col = rand.nextInt(7);
-        }while(!isSquareEmpty(openTiles,row,col)); // check if move is new
+        int row, col;
+        Board temp = new Board(parent.getBoard());
+    
+        do{
+            row =rand.nextInt(8); col = rand.nextInt(8);
+        }while(!isSquareEmpty(parent.getOpenTiles(),row,col)); // check if move is new
 
-        System.out.print("Found a new move");
-        temp.stamp('0', row, col); // add new move to board copy
-        openTiles.stamp('0',row,col); // remove one empty tile from avail_tiles
+        temp.stamp(symbol, row, col); // add new move to board copy
+        parent.getOpenTiles().stamp(symbol,row,col); // remove one empty tile from avail_tiles
         return new Node(temp);
     }
     private boolean isSquareEmpty(Board target, int r, int c){

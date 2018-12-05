@@ -9,7 +9,7 @@ public class Tree {
      {
         root = new Node(rootBoard.clone());
      }  
-    void evaluateNextMove()
+    Move evaluateNextMove()
     {
         int size = 10;
         ArrayList<Integer> values = new ArrayList<>();
@@ -17,9 +17,8 @@ public class Tree {
         for (int i=0; i < size; i++ )
             values.add(miniMax(root.getChild(i), false, 0, (int) Double.NEGATIVE_INFINITY, (int)Double.POSITIVE_INFINITY));
         int optimal = Collections.max(values), opt_index = values.indexOf(optimal);
-        Board nextMove = root.getChild(opt_index).getBoard();
-        nextMove.displayBoard();
-        root.getBoard().displayBoard();
+        Node nextMove = root.getChild(opt_index);
+        return nextMove.getNewMove();
     }
     private void createFirstGen(Node start, int gen_size)
     {
@@ -29,9 +28,7 @@ public class Tree {
     int miniMax(Node root, boolean isMax, int depth, int alpha, int beta)
     {
         int bestValue, generation_limit = 10;
-        System.out.println("Depth: " + depth);
         if(depth == 4){
-            root.evaluate();
             return root.getValue();
         }
         if(isMax)
@@ -47,7 +44,6 @@ public class Tree {
                     if (beta <= alpha) break;
                 
                 }
-                 //root.getBoard().displayBoard();
             return bestValue;
         }
         else
@@ -62,7 +58,6 @@ public class Tree {
                     beta = Math.min(beta, bestValue);
                     if (beta <= alpha)  break;
                 }
-                //root.getBoard().displayBoard();
             return bestValue;
         }
     }
@@ -77,7 +72,9 @@ public class Tree {
 
         temp.stamp(symbol, row, col); // add new move to board copy
         parent.getOpenTiles().stamp(symbol,row,col); // remove one empty tile from avail_tiles
-        return new Node(temp);
+        Node newChild = new Node(temp);
+        newChild.addNewMove(row, col);
+        return newChild;
     }
     private boolean isSquareEmpty(Board target, int r, int c){
         if (target.at(r,c) != '-')

@@ -25,9 +25,10 @@ public class ConnectFour extends Board{
         }
         do{ 
             displayGame();
+            System.out.println();
             playerMove();
-            displayGame();
             computerMove();
+            System.out.println();
 
         }while(true);
     }
@@ -53,42 +54,9 @@ public class ConnectFour extends Board{
     private void computerMove()
     {
         Tree stub = new Tree(board);
-        stub.evaluateNextMove();
+        Move move = stub.evaluateNextMove();
+        board.stamp('O', move.getRow(), move.getCol());
     }
-    // private  ArrayList<Coord> longestChain(Board board, char symbol){
-    //     //check horizontal
-    //     ArrayList<Coord> longestChain = new ArrayList<>();
-    //     ArrayList<Coord> tempChain = new ArrayList<>();
-    //     for (int i = 0; i < boardSize; i++)
-    //         for (int j = 0; j < boardSize; j++){
-    //             if(longestChain.size() == 4)
-    //                 return longestChain; 
-    //             else if(board.at(i,j) == symbol)
-    //                 tempChain.add(new Coord(i,j));
-    //             else
-    //             {
-    //                 if(tempChain.size() > longestChain.size())
-    //                     longestChain = new ArrayList<Coord>(tempChain);
-    //                 tempChain.clear();
-    //             }
-    //     }
-    //     //check vertical
-    //     for (int j = 0; j < boardSize; j++)
-    //         for (int i = 0; i < boardSize; i++){
-    //             if(longestChain.size() == 4)
-    //                 return longestChain; 
-    //             else if(board.at(i,j) == symbol)
-    //                 tempChain.add(new Coord(i,j));
-    //             else
-    //             {
-    //                 if(tempChain.size() > longestChain.size())
-    //                     longestChain = new ArrayList<Coord>(tempChain);
-    //                 tempChain.clear();
-    //             }
-    //     }
-    //     return longestChain;
-    // }
-
      public void displayGame() 
     {
         board.displayBoard();

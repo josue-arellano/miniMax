@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Board {
      char[][] board;
-    public static int boardSize = 8;
+    public static final int boardSize = 8;
     private static Random rand = new Random();
 
     public Board() {

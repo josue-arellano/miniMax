@@ -6,13 +6,14 @@ public class Tree {
     class Node {
         Board bnode;
         ArrayList<Node> children;
-        int value;
+        int value = 5;
         Node(Board clone){bnode = clone; children = new ArrayList<>();}
         Board getBoard(){return bnode;}
         void addChild(Node offspring){children.add(offspring);}
         int getValue(){return value;}
         int getNumOfChildren(){return children.size();}
         Node getChild(int index){return children.get(index);}
+        void evaluate(){;}
     }
      Node root;
      Board emptyTiles;
@@ -28,21 +29,22 @@ public class Tree {
     }
     int miniMax(Node root, boolean isMax, int depth, int alpha, int beta)
     {
-        int bestValue;
-        Node newChild = generateChild(root, emptyTiles);
-        root.addChild(newChild);
+        int bestValue, generation_limit = 10;
         System.out.println("Depth: " + depth);
-        if(depth == 5){
+        if(depth == 4){
+            root.evaluate();
             return root.getValue();
         }
         if(isMax)
         {
             bestValue = (int) Double.NEGATIVE_INFINITY;
-            for (int child=0; child< root.getNumOfChildren() ;child++) 
+            for (int child=0; child < generation_limit ;child++) 
                 {
+                    Node newChild = generateChild(root, emptyTiles);
+                    root.addChild(newChild);
                     int value = miniMax(root.getChild(child), false, depth+1, alpha, beta);
                     bestValue = Math.max(bestValue, value);
-                    beta = Math.max(alpha, bestValue);
+                    alpha = Math.max(alpha, bestValue);
                     if (beta <= alpha) break;
                 
                 }
@@ -51,8 +53,10 @@ public class Tree {
         else
         {
             bestValue = (int) Double.POSITIVE_INFINITY;
-            for (int child=0; child< root.getNumOfChildren() ;child++) 
+            for (int child=0; child< generation_limit ;child++) 
                 {
+                    Node newChild = generateChild(root, emptyTiles);
+                    root.addChild(newChild);
                     int value = miniMax(root.getChild(child), true, depth+1, alpha, beta);
                     bestValue = Math.min(bestValue, value);
                     beta = Math.min(beta, bestValue);
